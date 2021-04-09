@@ -109,7 +109,7 @@ class R2ATrabalhoTR2(IR2A):
         # placeholder
         selected_qi = 46980
 
-        self.passagem += 1
+        self.passagem += 1                  # contabiliza a passagem pelo código
         msg.add_quality_id(selected_qi)     # informa a qualidade escolhida
         self.send_down(msg)                 # passa a mensagem
 
