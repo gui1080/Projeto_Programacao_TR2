@@ -122,7 +122,15 @@ class R2ATrabalhoTR2(IR2A):
         print("P                        :", self.p)
         print("RESTRIÇÃO                :", restricao)
         print("RESTRIÇÃO DE TAXA DE BITS:", self.Rc)
+        print("QUANTIDADE QUE FALTA NO BUFFER:", self.whiteboard.get_amount_video_to_play())
+        print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
+        print("LISTA DE TRAVAMENTOS:", self.whiteboard.get_playback_pauses())                   # tupla - lista de pausas que ocorreu, junto dos momentos
         print("*********************************************************************************")
+
+        # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
+        # self.whiteboard.add_max_buffer_size(10)
+
+
 
         # CALCULO DO DESVIO
         # calculamos o desvio pra próxima iteração saber o valor necessário de p
@@ -171,3 +179,5 @@ class R2ATrabalhoTR2(IR2A):
 
     def finalization(self):
         pass
+
+
