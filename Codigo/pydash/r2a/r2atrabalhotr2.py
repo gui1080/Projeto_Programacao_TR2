@@ -10,7 +10,6 @@ import time
 import math
 from statistics import mean
 
-
 # (apenas fazendo alguns testes)
 
 class R2ATrabalhoTR2(IR2A):
@@ -110,6 +109,7 @@ class R2ATrabalhoTR2(IR2A):
         else:
             estimativa_atual = 0
             restricao = 0
+            self.Rc.append(0)
 
 
         # Prints :)
@@ -122,7 +122,15 @@ class R2ATrabalhoTR2(IR2A):
         print("P                        :", self.p)
         print("RESTRIÇÃO                :", restricao)
         print("RESTRIÇÃO DE TAXA DE BITS:", self.Rc)
+        print("QUANTIDADE QUE FALTA NO BUFFER:", self.whiteboard.get_amount_video_to_play())
+        print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
+        print("LISTA DE TRAVAMENTOS:", self.whiteboard.get_playback_pauses())                   # tupla - lista de pausas que ocorreu, junto dos momentos
         print("*********************************************************************************")
+
+        # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
+        # self.whiteboard.add_max_buffer_size(10)
+
+
 
         # CALCULO DO DESVIO
         # calculamos o desvio pra próxima iteração saber o valor necessário de p
@@ -150,14 +158,19 @@ class R2ATrabalhoTR2(IR2A):
         # placeholder
         # selected_qi = 46980
 
+
         selected_qi = self.qi[0]
         for i in self.qi:
             if estimativa_atual > i:
-                selected_qi = i
+                if self.whiteboard.get_amount_video_to_play() > 5:          #Verifica se o buffer tem espaço de armazenamento
+                    selected_qi = i
+                else:
+                    selected_qi = self.qi[0]
 
         self.passagem += 1                  # contabiliza a passagem pelo código
         msg.add_quality_id(selected_qi)     # informa a qualidade escolhida
         self.send_down(msg)                 # passa a mensagem
+        del self.Rc[0]                      # Deleta primeiro valor da lista para que esta possua sempre só 1 componente
 
     def handle_segment_size_response(self, msg):
 
