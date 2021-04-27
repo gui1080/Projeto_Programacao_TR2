@@ -10,7 +10,6 @@ import time
 import math
 from statistics import mean
 
-
 # (apenas fazendo alguns testes)
 
 class R2ATrabalhoTR2(IR2A):
@@ -110,6 +109,7 @@ class R2ATrabalhoTR2(IR2A):
         else:
             estimativa_atual = 0
             restricao = 0
+            self.Rc.append(0)
 
 
         # Prints :)
@@ -158,14 +158,33 @@ class R2ATrabalhoTR2(IR2A):
         # placeholder
         # selected_qi = 46980
 
+
         selected_qi = self.qi[0]
-        for i in self.qi:
-            if estimativa_atual > i:
-                selected_qi = i
+
+    #-------------------------------------------------------------------------------------------------------------------------------------
+        #for i in self.qi:
+        #    if estimativa_atual > i:
+        #        if self.whiteboard.get_amount_video_to_play() > 5:          #Verifica se o buffer tem espaço de armazenamento
+        #            selected_qi = i
+        #        else:
+        #            selected_qi = self.qi[0]
+    # -------------------------------------------------------------------------------------------------------------------------------------
+
+        #Se o buffer tiver espaço realiza a operação com o valor da estimativa, caso contrário faz com que seja usada uma restrição para a taxa de bits
+        if self.whiteboard.get_amount_video_to_play() > 0:      #Verifica se há espaço no buffer
+            for i in self.qi:
+                if estimativa_atual > i:
+                    selected_qi = i
+        else:
+            for i in self.qi:
+                if restricao > i:
+                    selected_qi = i
+
 
         self.passagem += 1                  # contabiliza a passagem pelo código
         msg.add_quality_id(selected_qi)     # informa a qualidade escolhida
         self.send_down(msg)                 # passa a mensagem
+        del self.Rc[0]                      # Deleta primeiro valor da lista para que esta possua sempre só 1 componente
 
     def handle_segment_size_response(self, msg):
 
