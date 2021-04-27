@@ -160,12 +160,26 @@ class R2ATrabalhoTR2(IR2A):
 
 
         selected_qi = self.qi[0]
-        for i in self.qi:
-            if estimativa_atual > i:
-                if self.whiteboard.get_amount_video_to_play() > 5:          #Verifica se o buffer tem espaço de armazenamento
+
+    #-------------------------------------------------------------------------------------------------------------------------------------
+        #for i in self.qi:
+        #    if estimativa_atual > i:
+        #        if self.whiteboard.get_amount_video_to_play() > 5:          #Verifica se o buffer tem espaço de armazenamento
+        #            selected_qi = i
+        #        else:
+        #            selected_qi = self.qi[0]
+    # -------------------------------------------------------------------------------------------------------------------------------------
+
+        #Se o buffer tiver espaço realiza a operação com o valor da estimativa, caso contrário faz com que seja usada uma restrição para a taxa de bits
+        if self.whiteboard.get_amount_video_to_play() > 0:      #Verifica se há espaço no buffer
+            for i in self.qi:
+                if estimativa_atual > i:
                     selected_qi = i
-                else:
-                    selected_qi = self.qi[0]
+        else:
+            for i in self.qi:
+                if restricao > i:
+                    selected_qi = i
+
 
         self.passagem += 1                  # contabiliza a passagem pelo código
         msg.add_quality_id(selected_qi)     # informa a qualidade escolhida
