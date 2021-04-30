@@ -38,7 +38,7 @@ class R2ATrabalhoTR2(IR2A):
 
         self.p = 0                          # desvio padrão normalizado de vazão sendo calculado
 
-        self.mi = 0.2                       # mi[0, 0.5]
+        self.mi = 0.5                       # mi[0, 0.5]
 
 
     def handle_xml_request(self, msg):
@@ -125,6 +125,8 @@ class R2ATrabalhoTR2(IR2A):
         print("QUANTIDADE QUE FALTA NO BUFFER:", self.whiteboard.get_amount_video_to_play())
         print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
         print("LISTA DE TRAVAMENTOS:", self.whiteboard.get_playback_pauses())                   # tupla - lista de pausas que ocorreu, junto dos momentos
+        print("MOMENTO E TAMANHO DO BUFFER: ", self.whiteboard.get_playback_buffer_size())
+        print("MOMENTO E STATUS:", self.whiteboard.get_playback_history())
         print("*********************************************************************************")
 
         # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
@@ -170,15 +172,20 @@ class R2ATrabalhoTR2(IR2A):
         #            selected_qi = self.qi[0]
     # -------------------------------------------------------------------------------------------------------------------------------------
 
+
         #Se o buffer tiver espaço realiza a operação com o valor da estimativa, caso contrário faz com que seja usada uma restrição para a taxa de bits
-        if self.whiteboard.get_amount_video_to_play() > 0:      #Verifica se há espaço no buffer
-            for i in self.qi:
-                if estimativa_atual > i:
-                    selected_qi = i
+
+        if self.p < 0.4:      #Verifica se o desvio é menor que 0,4
+            if self.whiteboard.get_amount_video_to_play() > 0:  #Verifica se há espaço no buffer
+                for i in self.qi:
+                    if estimativa_atual > i:
+                        selected_qi = i
+            else:
+                for i in self.qi:
+                    if restricao > i:
+                        selected_qi = i
         else:
-            for i in self.qi:
-                if restricao > i:
-                    selected_qi = i
+            selected_qi = self.qi[0]
 
 
         self.passagem += 1                  # contabiliza a passagem pelo código
@@ -198,5 +205,3 @@ class R2ATrabalhoTR2(IR2A):
 
     def finalization(self):
         pass
-
-
