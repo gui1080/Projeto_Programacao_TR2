@@ -32,7 +32,7 @@ class R2ATrabalhoTR2(IR2A):
         self.delta = 0                      # delta, para a fórmula de Te
         self.te_menos2 = 0                  # Te[i-2]
 
-        self.P0 = 0.05                      # parametros arbitrarios para calculo de delta
+        self.P0 = 0.2                      # parametros arbitrarios para calculo de delta
         # P0 = 0.2                          #parâmetro P0 da função logística delta
         self.k = 21                         # relacionados com a qualidade da conexão
 
@@ -66,6 +66,7 @@ class R2ATrabalhoTR2(IR2A):
         # math.exp(x) retorna e^x
         # k e P0 dependem da conexão
         self.delta = (1 / (1 + (math.exp(-self.k * (self.p - self.P0)))))  # função logísitca da relação geral entre p e delta
+
 
         # ----------------------------------------
         # PARÂMETROS PARA ESTIMAR A VAZÃO
@@ -132,8 +133,6 @@ class R2ATrabalhoTR2(IR2A):
         # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
         # self.whiteboard.add_max_buffer_size(10)
 
-
-
         # CALCULO DO DESVIO
         # calculamos o desvio pra próxima iteração saber o valor necessário de p
 
@@ -161,8 +160,6 @@ class R2ATrabalhoTR2(IR2A):
         # selected_qi = 46980
 
 
-        selected_qi = self.qi[0]
-
     #-------------------------------------------------------------------------------------------------------------------------------------
         #for i in self.qi:
         #    if estimativa_atual > i:
@@ -175,17 +172,39 @@ class R2ATrabalhoTR2(IR2A):
 
         #Se o buffer tiver espaço realiza a operação com o valor da estimativa, caso contrário faz com que seja usada uma restrição para a taxa de bits
 
-        if self.p < 0.4:      #Verifica se o desvio é menor que 0,4
-            if self.whiteboard.get_amount_video_to_play() > 0:  #Verifica se há espaço no buffer
-                for i in self.qi:
-                    if estimativa_atual > i:
-                        selected_qi = i
-            else:
-                for i in self.qi:
-                    if restricao > i:
-                        selected_qi = i
+        #if self.p < 0.4:      #Verifica se o desvio é menor que 0,4
+        #    if self.whiteboard.get_amount_video_to_play() > 0:  #Verifica se há espaço no buffer
+        #        for i in self.qi:
+        #            if estimativa_atual > i:
+        #                selected_qi = i
+        #    else:
+        #        estimativa_atual = estimativa_atual * 0.5
+        #        for i in self.qi:
+        #            if estimativa_atual > i:
+        #                selected_qi = i
+
+        #else:
+        #    for i in self.qi:
+        #        if restricao > i:
+        #            selected_qi = i
+
+
+
+        selected_qi = self.qi[3]
+
+        if self.p > 0.4:
+            for i in self.qi:
+                if (estimativa_atual*0.4) > i:
+                    selected_qi = i
+            #selected_qi = self.qi[0]
+        elif self.p > 0.1 and self.p < 0.4:
+            for i in self.qi:
+                if restricao > i:
+                    selected_qi = i
         else:
-            selected_qi = self.qi[0]
+            for i in self.qi:
+                if estimativa_atual > i:
+                    selected_qi = i
 
 
         self.passagem += 1                  # contabiliza a passagem pelo código
