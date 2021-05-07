@@ -19,3 +19,7 @@ Guilherme Braga 17/0162290
 # Este Trabalho usa a biblioteca Pydash e suas dependências
 
 https://github.com/mfcaetano/pydash
+
+# Referência básica do algoritmo implementado:
+
+"Adaptive Streaming of Audiovisual Content Using MPEG DASH”, de Truong Cong Thang e Anh T. Pham
