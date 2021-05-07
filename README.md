@@ -1,6 +1,6 @@
 # Projeto de Programação - TR2
 
-Trabalho para a matéria de TR2 ministrada no semestre 2020/02, Universidade de Brasília. Algoritmo adaptativo para escolha da qualidade de segmentos de vídeo (tipo DASH). O arquivo feito é:
+Trabalho para a matéria de TR2 ministrada no semestre 2020/02, Universidade de Brasília. Algoritmo adaptativo para escolha da qualidade de segmentos de vídeo (tipo DASH). O arquivo que de fato foi implementado para este trabalho é:
 
 > r2atrabalhotr2.py
 
