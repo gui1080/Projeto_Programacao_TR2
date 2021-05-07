@@ -109,6 +109,9 @@ class R2ATrabalhoTR2(IR2A):
             self.Rc.append(restricao)
 
         else:
+            
+            # no começo não tem o que calcular na restrição
+            
             estimativa_atual = 0
             restricao = 0
             self.Rc.append(0)
@@ -125,20 +128,16 @@ class R2ATrabalhoTR2(IR2A):
         print("RESTRIÇÃO                :", restricao)
         print("RESTRIÇÃO DE TAXA DE BITS:", self.Rc)
         print("QUANTIDADE QUE FALTA NO BUFFER:", self.whiteboard.get_amount_video_to_play())
-        print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
+        #print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
         print("LISTA DE TRAVAMENTOS:", self.whiteboard.get_playback_pauses())                   # tupla - lista de pausas que ocorreu, junto dos momentos
-        print("MOMENTO E TAMANHO DO BUFFER: ", self.whiteboard.get_playback_buffer_size())
-        print("MOMENTO E STATUS:", self.whiteboard.get_playback_history())
+        #print("MOMENTO E TAMANHO DO BUFFER: ", self.whiteboard.get_playback_buffer_size())
+        #print("MOMENTO E STATUS:", self.whiteboard.get_playback_history())
         print("*********************************************************************************")
 
         # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
         # self.whiteboard.add_max_buffer_size(10)
 
-        # CALCULO DO DESVIO
-        # calculamos o desvio pra próxima iteração saber o valor necessário de p
-
-        #self.p = 0.40  # placeholder pra equação do delta rodar
-
+        
         # ----------------------------------------
 
         # seleciona qualidades para envio
@@ -148,48 +147,6 @@ class R2ATrabalhoTR2(IR2A):
         # qi[18] = 4242923bps
         # qi[19] = 4726737bps
 
-        # te é o throughput estimado
-        # faz um for, compara com as opções, escolhe uma qualidade
-
-        # selected_qi = self.qi[0]
-        # for i in self.qi:
-        #    if te > i:
-        #        selected_qi = i
-        #
-
-        # placeholder
-        # selected_qi = 46980
-
-
-    #-------------------------------------------------------------------------------------------------------------------------------------
-        #for i in self.qi:
-        #    if estimativa_atual > i:
-        #        if self.whiteboard.get_amount_video_to_play() > 5:          #Verifica se o buffer tem espaço de armazenamento
-        #            selected_qi = i
-        #        else:
-        #            selected_qi = self.qi[0]
-    # -------------------------------------------------------------------------------------------------------------------------------------
-
-
-        #Se o buffer tiver espaço realiza a operação com o valor da estimativa, caso contrário faz com que seja usada uma restrição para a taxa de bits
-
-        #if self.p < 0.4:      #Verifica se o desvio é menor que 0,4
-        #    if self.whiteboard.get_amount_video_to_play() > 0:  #Verifica se há espaço no buffer
-        #        for i in self.qi:
-        #            if estimativa_atual > i:
-        #                selected_qi = i
-        #    else:
-        #        estimativa_atual = estimativa_atual * 0.5
-        #        for i in self.qi:
-        #            if estimativa_atual > i:
-        #                selected_qi = i
-
-        #else:
-        #    for i in self.qi:
-        #        if restricao > i:
-        #            selected_qi = i
-
-
 
         selected_qi = self.qi[3]
 
@@ -197,11 +154,12 @@ class R2ATrabalhoTR2(IR2A):
             for i in self.qi:
                 if (estimativa_atual*0.4) > i:
                     selected_qi = i
-            #selected_qi = self.qi[0]
+            
         elif self.p > 0.1 and self.p < 0.4:
             for i in self.qi:
                 if restricao > i:
                     selected_qi = i
+                    
         else:
             for i in self.qi:
                 if estimativa_atual > i:
