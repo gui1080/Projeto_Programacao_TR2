@@ -1,6 +1,5 @@
 # Projeto de Programação para TR2
 # UnB - 2020/02
-# https://github.com/gui1080/Projeto_Programacao_TR2
 
 # Ayllah Ahmad 17/0056465
 # Guilherme Braga 17/0162290
@@ -23,22 +22,18 @@ class R2ATrabalhoTR2(IR2A):
         self.throughputs = []               # lista de vazões
         self.estimados_throughputs = []     # lista de estimativa das vazões
         self.qi = []                        # lista de qualidades
-
         self.Rc = []                        # restrição de taxa de bits
 
 
         self.request_time = 0               # tempo de solicitação
         self.passagem = 0                   # quantidade de vezes que passou pelo código
-        self.ts_menos1 = 0                  # Ts[i-1]
+        self.ts_menos1 = 0                  # Ts[i-1], ts é vazão suavizada
         self.delta = 0                      # delta, para a fórmula de Te
-        self.te_menos2 = 0                  # Te[i-2]
+        self.te_menos2 = 0                  # Te[i-2], te é o throughput estimado
 
-        self.P0 = 0.2                      # parametros arbitrarios para calculo de delta
-        # P0 = 0.2                          #parâmetro P0 da função logística delta
+        self.P0 = 0.2                       # parametros arbitrarios para calculo de delta ([0, 0.2] para redes wireless)
         self.k = 21                         # relacionados com a qualidade da conexão
-
         self.p = 0                          # desvio padrão normalizado de vazão sendo calculado
-
         self.mi = 0.5                       # mi[0, 0.5]
 
 
@@ -61,15 +56,14 @@ class R2ATrabalhoTR2(IR2A):
 
         self.request_time = time.perf_counter()      # inicia a contagem
 
-        # ----------------------------------------
+        # -----------------------------------------------------------------------------------------------------------------------------------------------------
         # CALCULO DO DELTA
 
         # math.exp(x) retorna e^x
         # k e P0 dependem da conexão
         self.delta = (1 / (1 + (math.exp(-self.k * (self.p - self.P0)))))  # função logísitca da relação geral entre p e delta
 
-
-        # ----------------------------------------
+        # -----------------------------------------------------------------------------------------------------------------------------------------------------
         # PARÂMETROS PARA ESTIMAR A VAZÃO
         # para obter a taxa de transferência estimada para o segmento i, usa-se uma forma de média em execução
 
@@ -87,7 +81,7 @@ class R2ATrabalhoTR2(IR2A):
             self.ts_menos1 = self.throughputs[0]    # pegando Ts(i-1)
             del self.throughputs[0]                 # mantendo uma lista só com throughput atual, próxima iteração vira Ts(i-1)
 
-        # ----------------------------------------
+        # -----------------------------------------------------------------------------------------------------------------------------------------------------
 
         # calcula Te(i), bota ele na lista de vazões estimadas, deleta o mais antigo, passa para frente
 
@@ -109,60 +103,27 @@ class R2ATrabalhoTR2(IR2A):
             self.Rc.append(restricao)
 
         else:
-            
-            # no começo não tem o que calcular na restrição
-            
             estimativa_atual = 0
             restricao = 0
             self.Rc.append(0)
 
 
-        # Prints :)
-        print("********************************************************************************")
-        print("VAZÃO                    :", self.throughputs)
-        print("VAZÃO REAL MENOS 1       :", self.ts_menos1)
-        print("LISTA DE VAZÃO ESTIMADA  :", self.estimados_throughputs)
-        print("DELTA                    :", self.delta)
-        print("ESTIMATIVA ATUAL         :", estimativa_atual)
-        print("P                        :", self.p)
-        print("RESTRIÇÃO                :", restricao)
-        print("RESTRIÇÃO DE TAXA DE BITS:", self.Rc)
-        print("QUANTIDADE QUE FALTA NO BUFFER:", self.whiteboard.get_amount_video_to_play())
-        #print("TAMANHO MÁXIMO DE BUFFER:", self.whiteboard.get_max_buffer_size())
-        print("LISTA DE TRAVAMENTOS:", self.whiteboard.get_playback_pauses())                   # tupla - lista de pausas que ocorreu, junto dos momentos
-        #print("MOMENTO E TAMANHO DO BUFFER: ", self.whiteboard.get_playback_buffer_size())
-        #print("MOMENTO E STATUS:", self.whiteboard.get_playback_history())
-        print("*********************************************************************************")
+        selected_qi = self.qi[3]    #inicia com uma qualidade qi[3]
 
-        # Com esse comando aqui vc muda o maximo do buffer de 60 pra 10
-        # self.whiteboard.add_max_buffer_size(10)
-
-        
-        # ----------------------------------------
-
-        # seleciona qualidades para envio
-        # qi[0] = 46980bps
-        # qi[1] = 91917bps
-        # ...
-        # qi[18] = 4242923bps
-        # qi[19] = 4726737bps
-
-
-        selected_qi = self.qi[3]
+        # A variância da taxa de transferência é usada para calcular uma margem de segurança para a taxa de transferência estimada
 
         if self.p > 0.4:
             for i in self.qi:
-                if (estimativa_atual*0.4) > i:
+                if (estimativa_atual*0.4) > i:      #Seleciona uma qualidade em torno de 40% da estimativa calculada
                     selected_qi = i
-            
+
         elif self.p > 0.1 and self.p < 0.4:
             for i in self.qi:
-                if restricao > i:
+                if restricao > i:                   #Seleciona uma qualidade em torno da restrição estipulada
                     selected_qi = i
-                    
         else:
             for i in self.qi:
-                if estimativa_atual > i:
+                if estimativa_atual > i:            #Seleciona uma qualidade em torno da estimativa calculada
                     selected_qi = i
 
 
