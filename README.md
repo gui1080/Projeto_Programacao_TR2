@@ -10,10 +10,10 @@ Para rodar, execute:
 
 # Participantes do trabalho
 
-Ayllah Ahmad 17/0056465
+Ayllah Ahmad - 17/0056465
 
 
-Guilherme Braga 17/0162290
+Guilherme Braga - 17/0162290
 
 
 # Este Trabalho usa a biblioteca Pydash e suas dependências
